@@ -2,30 +2,23 @@ package org.example.part1.MyHashSet;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 public class MyHashSet<V> implements MySet<V>, Iterable<V> {
 
-    private final int DEFAULT_CAPACITY = 1 << 4;
-    private final float DEFAULT_LOAD_FACTOR = 0.75f;
-
     static class MyNode<V> implements MySet.Entry<V> {
 
-        private int hash;
-        private V value;
+        private final int hash;
+        private final V value;
         private MyNode<V> next;
 
-        MyNode(V value) {
+        MyNode(V value, int hash) {
             this.value = value;
+            this.hash = hash;
         }
 
         public V getValue() {
             return this.value;
-        }
-
-        public final V setValue(V newValue) {
-            V oldValue = value;
-            value = newValue;
-            return oldValue;
         }
 
         public final String toString() { return "Value = " + value; }
@@ -34,62 +27,135 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
 
     /* ---------------- Static utilities -------------- */
 
-    static int hash(Object key) {
+    static int hash(Object value) {
         int h;
-        return (key == null) ? 0 : (h = key.hashCode()) ^ (h >>> 16);
+        return (value == null) ? 0 : (h = value.hashCode()) ^ (h >>> 16);
     }
 
     /* ---------------- Fields -------------- */
 
+    private final int DEFAULT_CAPACITY = 16;
+    private final float LOAD_FACTOR = 0.75f;
+
     private MyNode<V>[] table;
     private int size;
     private int modCount;
-//    int threshold;
-    private final float loadFactor;
+    float loadFactor;
+    int threshold;
 
     /* ---------------- Public operations -------------- */
 
     public MyHashSet() {
-        this.loadFactor = DEFAULT_LOAD_FACTOR;
+        this.loadFactor = LOAD_FACTOR;
+        this.threshold = (int)(DEFAULT_CAPACITY * LOAD_FACTOR);
     }
 
     public boolean add(V v) {
         return addVal(hash(v), v) == null;
     }
 
+    public int size() {
+        return size;
+    }
+
     final V addVal(int hash, V v) {
         MyNode<V>[] nodes;
-        MyNode<V> n;
+        MyNode<V> node;
+        int s, index;
 
-        if ((nodes = table) == null ) {
-            table = resize();
+        if ((nodes = table) == null || (s = nodes.length) == 0 ) {
+            s = (nodes = resize()).length;
         }
 
-        nodes[1] = newNode(v);
+        if ((node = nodes[index = (s - 1) & hash]) == null) {
+            nodes[index] = newNode(v, hash);
+        } else {
+            MyNode<V> currentNode = node;
+            while (true) {
+                if (currentNode.hash == hash &&
+                        (Objects.equals(v, currentNode.value))) {
+                    return currentNode.value;
+                }
+                if (currentNode.next == null) break;
+                currentNode = currentNode.next;
+            }
+            currentNode.next = newNode(v, hash);
+        }
 
+        modCount++;
+        if(++size > threshold) {
+            resize();
+        }
 
         return null;
     }
 
-//Node<K,V> newNode(int hash, K key, V value, HashMap.Node<K,V> next) {
-//    return new Node<>(hash, key, value, next);
-//}
-
-
-    private MyNode<V> newNode(V v) {
-        return new MyNode<>(v);
+    private MyNode<V> newNode(V v, int hash) {
+        return new MyNode<>(v, hash);
     }
 
     final MyNode<V>[] resize() {
-        int cap = DEFAULT_CAPACITY;
-        MyNode<V>[] newTab = (MyNode<V>[])new MyNode[cap];
+
+        MyNode<V>[] oldTable = table;
+        int oldCapacity = table == null ? 0 : table.length;
+        int newCapacity, newThreshold;
+
+        if (oldCapacity > 0) {
+            newCapacity = oldCapacity * 2;
+            threshold = (int) (newCapacity * loadFactor);
+        } else {
+            newCapacity = DEFAULT_CAPACITY;
+        }
+
+        @SuppressWarnings({"unchecked"})
+        MyNode<V>[] newTab = (MyNode<V>[])new MyNode[newCapacity];
         table = newTab;
+
+        if(oldTable != null) {
+            for (MyNode<V> myNode : oldTable) {
+                if (myNode != null) {
+                    table[(table.length - 1) & myNode.hash] = myNode;
+                }
+            }
+        }
         return newTab;
     }
 
-    /* ---------------- Iterators -------------- */
+    public boolean remove(V v) {
+        return removeNode(hash(v), v) != null;
+    }
+
+    private MyNode<V> removeNode(int hash, V value) {
+        MyNode<V>[] tab = table;
+        if (tab == null) return null;
+
+        int index = (tab.length - 1) & hash;
+        MyNode<V> node = tab[index];
+        MyNode<V> prev = null;
+
+        while (node != null) {
+            if (node.hash == hash &&
+                    (Objects.equals(value, node.value))) {
+
+                if (prev == null) {
+                    tab[index] = node.next;
+                } else {
+                    prev.next = node.next;
+                }
+
+                modCount++;
+                size--;
+                return node;
+            }
+            prev = node;
+            node = node.next;
+        }
+
+        return null;
+    }
 
 
+    /* ---------------- Iterator -------------- */
 
     public Iterator<V> iterator() {
         return new MyIterator();
@@ -98,42 +164,33 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
     private class MyIterator implements Iterator<V> {
 
         private int bucketIndex = 0;
-        private MyNode<V> current = null;
         private MyNode<V> next = null;
-//        private int expectedModCount = modCount; // для fail-fast поведения
 
         public MyIterator() {
             findNext();
         }
 
-        @Override
         public boolean hasNext() {
             return next != null;
         }
 
-        @Override
         public V next() {
-//            if (expectedModCount != modCount) {
-//                throw new ConcurrentModificationException();
-//            }
             if (!hasNext()) {
                 throw new NoSuchElementException();
             }
 
-            current = next;
-            findNext(); // ищем следующий элемент
+            MyNode<V> current = next;
+            findNext();
 
             return current.value;
         }
 
         private void findNext() {
-            // Если в текущей цепочке есть следующий элемент
             if (next != null && next.next != null) {
                 next = next.next;
                 return;
             }
 
-            // Ищем следующий непустой бакет
             while (bucketIndex < table.length) {
                 if (table[bucketIndex] != null) {
                     next = table[bucketIndex++];
@@ -142,23 +199,7 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
                 bucketIndex++;
             }
 
-            // Больше элементов нет
             next = null;
         }
-
-//        @Override
-//        public void remove() {
-//            if (current == null) {
-//                throw new IllegalStateException();
-//            }
-////            if (expectedModCount != modCount) {
-////                throw new ConcurrentModificationException();
-////            }
-//
-//            // Удаляем current элемент из множества
-//            MyHashSet.this.remove(current.value);
-//            expectedModCount = modCount; // обновляем счетчик изменений
-//            current = null;
-//        }
     }
 }
