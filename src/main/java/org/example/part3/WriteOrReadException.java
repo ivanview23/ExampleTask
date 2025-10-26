@@ -15,7 +15,4 @@ public class WriteOrReadException extends RuntimeException {
         super(message, cause);
     }
 
-    public WriteOrReadException(Throwable cause) {
-        super(cause);
-    }
 }
