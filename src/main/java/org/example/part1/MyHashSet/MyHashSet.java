@@ -1,6 +1,7 @@
 package org.example.part1.MyHashSet;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
@@ -39,7 +40,6 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
 
     private MyNode<V>[] table;
     private int size;
-    private int modCount;
     float loadFactor;
     int threshold;
 
@@ -82,7 +82,6 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
             currentNode.next = newNode(v, hash);
         }
 
-        modCount++;
         if(++size > threshold) {
             resize();
         }
@@ -98,7 +97,7 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
 
         MyNode<V>[] oldTable = table;
         int oldCapacity = table == null ? 0 : table.length;
-        int newCapacity, newThreshold;
+        int newCapacity;
 
         if (oldCapacity > 0) {
             newCapacity = oldCapacity * 2;
@@ -143,7 +142,6 @@ public class MyHashSet<V> implements MySet<V>, Iterable<V> {
                     prev.next = node.next;
                 }
 
-                modCount++;
                 size--;
                 return node;
             }

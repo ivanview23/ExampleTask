@@ -78,7 +78,7 @@ public class MyArrayList<V> implements MyList<V>, Iterable<V> {
     @SuppressWarnings("unchecked")
     public void addAll(MyArrayList<V> other) {
         for (int i = 0; i < other.size; i++) {
-            this.add((V) other.array[i]); // используем существующий add()
+            this.add((V) other.array[i]);
         }
     }
 

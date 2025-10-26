@@ -1,6 +1,5 @@
 package org.example.part2;
 
-import java.time.OffsetDateTime;
 import java.time.Year;
 import java.util.Collection;
 import java.util.Comparator;
@@ -70,17 +69,17 @@ public class Student {
         Book book12 = new Book("JDBC database access with Java", 458, Year.of(1997));
 
         return List.of(
-                new Student("Зотов Руслан", List.of(book2, book6, book7)),
-                new Student("Михайлов Михаил", List.of(book12, book3, book1, book5)),
-                new Student("Титов Сергей", List.of(book5, book1, book4)),
+                new Student("Зотов Руслан", List.of(book2, book6, book7, book9, book3)),
+                new Student("Михайлов Михаил", List.of(book12, book3, book1, book5, book6)),
+                new Student("Титов Сергей", List.of(book5, book1, book4, book7, book11)),
                 new Student("Пушкин Анатолий", List.of(book4, book8, book7, book9, book12)),
-                new Student("Димидов Олег", List.of(book3, book6, book11, book2)),
-                new Student("Уолберг Билл", List.of(book7, book5, book1)),
-                new Student("Немов Евгений", List.of(book2, book9, book12, book8)),
-                new Student("Грибоедов Василий", List.of(book5, book10, book2, book4)),
-                new Student("Синицин Роман", List.of(book11, book6, book10, book7)),
-                new Student("Летов Кирилл", List.of(book1, book9, book3, book6)),
-                new Student("Огурченко Людмил", List.of(book7, book5, book4, book1)),
+                new Student("Димидов Олег", List.of(book3, book6, book11, book2, book7)),
+                new Student("Уолберг Билл", List.of(book7, book5, book1, book6, book8)),
+                new Student("Немов Евгений", List.of(book2, book9, book12, book8, book6)),
+                new Student("Грибоедов Василий", List.of(book5, book10, book2, book4, book7)),
+                new Student("Синицин Роман", List.of(book11, book6, book10, book7, book9)),
+                new Student("Летов Кирилл", List.of(book1, book9, book3, book6, book12)),
+                new Student("Огурченко Людмил", List.of(book7, book5, book4, book1, book10)),
                 new Student("Шматко Николай", List.of(book10, book5, book8, book3, book11))
                 );
     }
