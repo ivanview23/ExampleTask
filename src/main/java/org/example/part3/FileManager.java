@@ -2,7 +2,7 @@ package org.example.part3;
 
 import java.util.List;
 
-public interface WriteOrReadDataOfFile {
+public interface FileManager {
 
     void writeOnFile(String path, String text);
     void appendToFile(String path, String text);

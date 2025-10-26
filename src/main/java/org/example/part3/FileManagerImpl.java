@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.List;
 
-public class WriteOrReadDataOfFileImpl implements WriteOrReadDataOfFile {
+public class FileManagerImpl implements FileManager {
 
-    public WriteOrReadDataOfFileImpl() {}
+    public FileManagerImpl() {}
 
     /* ---------------- Write files -------------- */
 
@@ -151,7 +151,7 @@ public class WriteOrReadDataOfFileImpl implements WriteOrReadDataOfFile {
     /* ---------------- Test -------------- */
 
     public static void main(String[] args) {
-        WriteOrReadDataOfFileImpl fileManager = new WriteOrReadDataOfFileImpl();
+        FileManagerImpl fileManager = new FileManagerImpl();
 
         try {
             // Тест записи
