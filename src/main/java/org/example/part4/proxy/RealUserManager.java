@@ -10,7 +10,7 @@ public class RealUserManager implements UserManager {
 
     public RealUserManager() {
         userData = new HashMap<>();
-        // Инициализируем базу данных некоторыми пользователями
+
         User admin = new User("Sergey", "Secret1");
         admin.setUserInfo("Администратор системы");
         admin.setId(1L);
@@ -46,7 +46,7 @@ public class RealUserManager implements UserManager {
         System.out.println("RealUserManager: Добавление нового пользователя " + username);
         User newUser = new User(username, password);
         newUser.setUserInfo(userInfo);
-        newUser.setId(System.currentTimeMillis()); // Простой способ генерации ID
+        newUser.setId(System.currentTimeMillis());
         userData.put(username, newUser);
     }
 
@@ -56,7 +56,6 @@ public class RealUserManager implements UserManager {
         return userData.remove(username) != null;
     }
 
-    // Вспомогательный метод для проверки пароля
     public boolean validatePassword(String username, String password) {
         User user = userData.get(username);
         return user != null && user.getPassword().equals(password);

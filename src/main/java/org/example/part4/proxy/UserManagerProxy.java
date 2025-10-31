@@ -9,10 +9,9 @@ public class UserManagerProxy implements UserManager {
 
     public UserManagerProxy() {
         this.isAuthenticated = false;
-        // Ленивая инициализация - реальный менеджер создается только при необходимости
+
     }
 
-    // Метод аутентификации
     public boolean authenticate(String username, String password) {
         if (realUserManager == null) {
             realUserManager = new RealUserManager();
@@ -36,14 +35,12 @@ public class UserManagerProxy implements UserManager {
         System.out.println("Proxy: Пользователь вышел из системы");
     }
 
-    // Проверка прав доступа
     private void checkAccess() {
         if (!isAuthenticated) {
             throw new SecurityException("Proxy: Доступ запрещен. Требуется аутентификация.");
         }
     }
 
-    // Проверка прав администратора
     private void checkAdminAccess() {
         checkAccess();
         if (!"admin".equals(currentUser)) {
@@ -67,19 +64,18 @@ public class UserManagerProxy implements UserManager {
 
     @Override
     public void addUser(String username, String password, String userInfo) {
-        checkAdminAccess(); // Только администратор может добавлять пользователей
+        checkAdminAccess();
         System.out.println("Proxy: Добавление пользователя " + username + " администратором " + currentUser);
         realUserManager.addUser(username, password, userInfo);
     }
 
     @Override
     public boolean deleteUser(String username) {
-        checkAdminAccess(); // Только администратор может удалять пользователей
+        checkAdminAccess();
         System.out.println("Proxy: Удаление пользователя " + username + " администратором " + currentUser);
         return realUserManager.deleteUser(username);
     }
 
-    // Дополнительные методы прокси
     public String getCurrentUser() {
         return currentUser;
     }
