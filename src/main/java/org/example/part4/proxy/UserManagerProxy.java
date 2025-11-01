@@ -1,5 +1,9 @@
 package org.example.part4.proxy;
 
+import org.example.part4.user.RealUserManager;
+import org.example.part4.user.User;
+import org.example.part4.user.UserManager;
+
 import java.util.List;
 
 public class UserManagerProxy implements UserManager {

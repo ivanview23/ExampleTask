@@ -1,4 +1,4 @@
-package org.example.part4.proxy;
+package org.example.part4.user;
 
 public class User {
     private long id;
