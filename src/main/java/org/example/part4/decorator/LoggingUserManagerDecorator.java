@@ -48,7 +48,7 @@ public class LoggingUserManagerDecorator extends UserManagerDecorator {
 
         boolean result = super.deleteUser(username);
 
-        System.out.println("LOGGING: Результат удаления: " + (result ? "УСПЕХ" : "НЕ УДАЛОСЬ"));
+        System.out.println("LOGGING: Результат удаления: " + (result ? "ACCESS" : "FAILS"));
         return result;
     }
 }

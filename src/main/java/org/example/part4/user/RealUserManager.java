@@ -11,7 +11,7 @@ public class RealUserManager implements UserManager {
     public RealUserManager() {
         userData = new HashMap<>();
 
-        User admin = new User("Sergey", "Secret1");
+        User admin = new User("admin", "Secret1");
         admin.setUserInfo("Администратор системы");
         admin.setId(1L);
 
